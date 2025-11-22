@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html><body>
+<h2>Approved Bookings</h2>
+{% if bookings %}
+<ul>
+  {% for b in bookings %}
+  <li>{{ b.name }} - {{ b.service }} - {{ b.date }} {{ b.time }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No approved bookings yet.</p>
+{% endif %}
+</body></html>

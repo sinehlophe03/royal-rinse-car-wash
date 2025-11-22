@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html><body>
+<h2>Admin Dashboard</h2>
+<a href="/logout">Logout</a>
+<table border="1">
+  <tr><th>Name</th><th>Service</th><th>Date</th><th>Status</th><th>Action</th></tr>
+  {% for b in bookings %}
+  <tr>
+    <td>{{ b.name }}</td>
+    <td>{{ b.service }}</td>
+    <td>{{ b.date }} {{ b.time }}</td>
+    <td>{{ b.status }}</td>
+    <td>
+      <a href="/approve/{{ b.id }}">Approve</a> |
+      <a href="/reject/{{ b.id }}">Reject</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+</body></html>
