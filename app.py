@@ -13,13 +13,42 @@ from flask import (
 )
 from flask_sqlalchemy import SQLAlchemy
 
-# --- Configuration ---
+# init_db.py
+from app import app, db, User, Booking  # Import your app and models
+
+with app.app_context():
+    db.create_all()
+    print("PostgreSQL tables created successfully.")
+import os 
+# ... other imports
+
+# The environment variable provided by Render for your Postgres DB
+DB_URL = os.environ.get('DATABASE_URL') 
+
+# Fix for Render/Heroku Postgres URL format:
+# If the URL starts with 'postgres://', change it to 'postgresql://' for SQLAlchemy
+if DB_URL and DB_URL.startswith("postgres://"):
+    DB_URL = DB_URL.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL or 'sqlite:///royalrinse.db' 
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+        # OPTIONAL: Add an initial admin user here if needed
+
+if __name__ == '__main__':
+    # Check if we are running a special command (like creating the DB)
+    if os.environ.get('INIT_DB') == 'True':
+        create_db_tables()
+    else:
+        app.run(debug=True)
 class Config:
     """Application configuration settings."""
     # Use environment variable for Secret Key, fall back to a dummy one for local dev (but this is insecure)
     SECRET_KEY = os.environ.get("SECRET_KEY", "change_me_to_a_random_string_in_production")
     
     # Database Configuration
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///royalrinse.db')
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///royalrinse.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
@@ -314,3 +343,4 @@ if __name__ == "__main__":
         # Creates database tables if they don't exist
         db.create_all() 
     app.run(debug=True)
+
