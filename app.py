@@ -28,6 +28,21 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = DB_URL or 'sqlite:///royalrinse.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # In app.py
+# ...
+class Config:
+    # ... other configs ...
+
+    DB_URL = os.environ.get('DATABASE_URL')
+
+    # Fix for Render/Heroku Postgres URL format
+    if DB_URL and DB_URL.startswith("postgres://"):
+        DB_URL = DB_URL.replace("postgres://", "postgresql://", 1)
+
+    SQLALCHEMY_DATABASE_URI = DB_URL or 'sqlite:///royalrinse.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # ...
+# ...
     
     # Admin Credentials - Load securely from environment
     ADMIN_USER = os.environ.get("ADMIN_USER", "admin")
@@ -316,3 +331,4 @@ if __name__ == "__main__":
         # Creates database tables ONLY for local development with SQLite
         db.create_all() 
     app.run(debug=True)
+
